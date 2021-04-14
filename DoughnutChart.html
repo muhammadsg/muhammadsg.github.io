@@ -1,0 +1,204 @@
+<!-- Doughnut chart and legend template from https://zeroviscosity.com/d3-js-step-by-step/step-3-adding-a-legend -->
+<!-- Doughnut chart loading animation from https://stackoverflow.com/questions/20501067/animating-d3-donut-chart-on-load  -->
+<!DOCTYPE html>
+<!-- Website template from https://www.w3schools.com/w3css/w3css_templates.asp -->
+<html>
+<title>CPSC 583 Vis 1</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+<style>
+    body, html {
+        height: 100%;
+        font-family: "Inconsolata", sans-serif;
+    }
+
+    .axis .domain {
+        display: none;
+    }
+
+</style>
+
+<!-- Links (sit on top) -->
+<div class="w3-top">
+    <div class="w3-row w3-padding w3-black">
+        <div class="w3-col s3">
+            <a href="index.html#" class="w3-button w3-block w3-black">Home</a>
+        </div>
+        <div class="w3-col s3">
+            <a href="index.html#about" class="w3-button w3-block w3-black">About</a>
+        </div>
+        <div class="w3-col s3">
+            <a href="index.html#visual" class="w3-button w3-block w3-black">Visualizations</a>
+        </div>
+        <div class="w3-col s3">
+            <a href="index.html#conclusion" class="w3-button w3-block w3-black">Conclusion</a>
+        </div>
+    </div>
+</div>
+
+<head>
+    <meta charset="utf-8">
+    <title>Doughnut Chart</title>
+    <style>
+        .legend {
+            font-size: 12px;
+        }
+        rect {
+            stroke-width: 2;
+        }
+    </style>
+</head>
+
+<!-- Add centering to whole page -->
+<div  align="center">
+<body>
+<div id="chart"></div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+
+    var data1 = 'AgeDifferenceWins.csv'
+    var data2 = 'AllWInsByType.csv'
+    var width = 360;
+    var height = 460;
+    var radius = Math.min(width, height) / 2;
+    var donutWidth = 75;
+    var legendRectSize = 18;
+    var legendSpacing = 4;
+
+    let tooltip = d3
+        .select('body')
+        .append('div')
+        .style('position', 'absolute')
+        .style('z-index', '10')
+        .style('visibility', 'hidden')
+        .style('background-color', 'white')
+        .style('border', 'solid')
+        .style('border-width', '2px')
+        .style('border-radius', '5px')
+        .style('padding', '5px');
+
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    var svg = d3.select('#chart')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .append('g')
+        .attr('transform', 'translate(' + (width / 2) +
+            ',' + (height / 2 + 50) + ')');
+
+    var firstTime = true;
+    updateData(data1);
+
+    function updateData(data){
+       if(!firstTime) {
+       d3.select("svg")
+       .transition()
+       .duration(1000)
+       .attr("width", 0).remove();
+
+       color = d3.scaleOrdinal(d3.schemeCategory10);
+       svg = d3.select('#chart')
+           .append('svg')
+           .attr('width', width)
+           .attr('height', height)
+           .append('g')
+           .attr('transform', 'translate(' + (width / 2) +
+               ',' + (height / 2 + 50) + ')');
+       };
+
+        var arc = d3.arc()
+            .innerRadius(radius - donutWidth)
+            .outerRadius(radius);
+
+        var pie = d3.pie()
+            .value(function(d) { return d.count; })
+            .sort(null);
+
+        d3.csv(data, function(error, dataset) {
+            dataset.forEach(function(d) {
+                d.count = +d.count;
+            });
+
+            var path = svg.selectAll('path')
+                .data(pie(dataset))
+                .enter()
+                .append('path')
+                .attr('d', arc)
+                .style("opacity", 0)
+                .attr('fill', function(d, i) {
+                    return color(d.data.label);
+                })
+                .on('mouseover', function() {
+                    tooltip.style('visibility', 'visible');
+                })
+                .on('mousemove', function(d) {
+                    tooltip
+                        .style('top', d3.event.pageY - 10 + 'px')
+                        .style('left', d3.event.pageX + 10 + 'px')
+                        .style('background-color', color(d.data.label))
+                        .text(`${d.data.label}:${d.data.count}`);
+                })
+                .on('mouseout', function() {
+                    tooltip.style('visibility', 'hidden');
+                })
+                .transition()
+                .duration(1000)
+                .style("opacity", 1)
+                .attrTween('d', function(d) {
+                    var i = d3.interpolate({startAngle: 1.1*Math.PI, endAngle: 1.1*Math.PI}, d);
+                    return function(t) { return arc(i(t));
+                    }
+                });
+
+             legend = svg.selectAll('.legend')
+                .data(color.domain())
+                .enter()
+                .append('g')
+                .attr('class', 'legend')
+                .attr('transform', function(d, i) {
+                    var height = legendRectSize + legendSpacing;
+                    var offset =  height * color.domain().length / 2;
+                    var horz = -2 * legendRectSize;
+                    var vert = i * height - offset;
+                    return 'translate(' + horz + ',' + vert + ')';
+                });
+
+            legend.append('rect')
+                .attr('width', legendRectSize)
+                .attr('height', legendRectSize)
+                .style('fill', color)
+                .style('stroke', color);
+
+            legend.append('text')
+                .attr('x', legendRectSize + legendSpacing)
+                .attr('y', legendRectSize - legendSpacing)
+                .text(function(d) { return d; });
+
+            legend.exit().remove();
+        });
+
+        firstTime = false;
+    }
+</script>
+
+<div id="option1">
+    <input name="updateButton"
+           type="button"
+           value="Wins by Age Difference"
+           onclick="updateData(data1)" />
+</div>
+
+<div id="option2">
+    <input name="updateButton"
+           type="button"
+           value="Wins by Type"
+           onclick="updateData(data2)" />
+</div>
+
+</body>
+</div>
+</html>

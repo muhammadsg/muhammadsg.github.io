@@ -1,0 +1,332 @@
+<!-- Treemap code from tutorial and tooltip snippet from following thread:
+https://stackoverflow.com/questions/64851125/add-mouse-hover-containing-specific-data-to-d3-js-tree-map -->
+<!DOCTYPE html>
+<!-- Website template from https://www.w3schools.com/w3css/w3css_templates.asp -->
+<html>
+<title>CPSC 583 Vis 1</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+<style>
+    body, html {
+        height: 100%;
+        font-family: "Inconsolata", sans-serif;
+    }
+
+    .bgimg {
+        background-position: center;
+        background-size: cover;
+        background-image: url("background.jpeg");
+        min-height: 75%;
+    }
+
+</style>
+<body>
+
+    <!-- Links (sit on top) -->
+    <div class="w3-top">
+        <div class="w3-row w3-padding w3-black">
+            <div class="w3-col s3">
+                <a href="index.html#" class="w3-button w3-block w3-black">Home</a>
+            </div>
+            <div class="w3-col s3">
+                <a href="index.html#about" class="w3-button w3-block w3-black">About</a>
+            </div>
+            <div class="w3-col s3">
+                <a href="index.html#visual" class="w3-button w3-block w3-black">Visualizations</a>
+            </div>
+            <div class="w3-col s3">
+                <a href="index.html#conclusion" class="w3-button w3-block w3-black">Conclusion</a>
+            </div>
+        </div>
+    </div>
+
+<head>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <style>
+        .svg-container{
+            display: inline-block;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<!-- Add a background color and large text to the whole page -->
+<div class="w3-sand w3-grayscale w3-large" align="center">
+
+<script>
+
+    let widthOriginal
+    let heightOriginal
+    let xOriginal
+    let yOriginal
+
+    margin = {top: 100, right: 20, bottom: 30, left: 50}
+
+    let body = d3.select("#body")
+    let tooltip = d3
+        .select('body')
+        .append('div')
+        .style('position', 'absolute')
+        .style('z-index', '10')
+        .style('visibility', 'hidden')
+        .style('background-color', 'white')
+        .style('border', 'solid')
+        .style('border-width', '2px')
+        .style('border-radius', '5px')
+        .style('padding', '5px');
+
+    var color = d3.scale.category10();
+
+    var canvas = d3.select("body").append("svg")
+        .attr("width", 800)
+        .attr("height", 800)
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+    d3.json("fightGeneralData.json", function (data) {
+
+        var treemap = d3.layout.treemap()
+            .size([800, 800])
+            .nodes(data)
+        var cells = canvas.selectAll(".cell")
+            .data(treemap)
+            .enter()
+            .append("g")
+            .attr("class", "cell")
+        cells.append("rect")
+            .attr("x", function (d){
+                xOriginal = d.x;
+                return d.x;
+            })
+            .attr("y", function (d) {
+                yOriginal = d.y;
+                return d.y;
+            })
+            .attr("width", function (d) {
+                widthOriginal = d.dx;
+                return d.dx;
+            })
+            .attr("height", function (d) {
+                heightOriginal = d.dy;
+                return d.dy;
+            })
+            .attr("fill", function (d) {
+                return d.children ? null : color(d.name);
+            })
+            .attr("stroke", "white")
+            .on('mouseover', function() {
+                tooltip.style('visibility', 'visible');
+            })
+            .on('mousemove', function(d) {
+                tooltip
+                    .style('top', d3.event.pageY - 10 + 'px')
+                    .style('left', d3.event.pageX + 10 + 'px')
+                    .style('background-color', color(d.name))
+                    .text(`Matches where ${d.name}`);
+            })
+            .on('mouseout', function() {
+                tooltip.style('visibility', 'hidden');
+            })
+            .on('click', function(d){
+              updateData();
+            });
+
+        cells.append("text")
+            .attr("x", function (d) {
+                return d.x + d.dx / 2
+            })
+            .attr("y", function (d) {
+                return d.y + d.dy / 2
+            })
+            .attr("text-anchor", "middle")
+            .text(function (d) {
+                return d.children ? null: d.name + ": " + d.value;
+            })
+    });
+
+    function updateData(){
+        canvas
+            .transition()
+            .duration(1000)
+            .ease("d3.easeCubic")
+            .attr("height", 0).remove()
+
+        body = d3.select("#body")
+        color = d3.scale.category10();
+
+        canvas = d3.select("body").append("svg")
+            .attr("width", 800)
+            .attr("height", 800)
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        d3.json("fightDataAggregate.json", function (data) {
+
+            var treemap = d3.layout.treemap()
+                .size([800, 800])
+                .nodes(data)
+            var cells = canvas.selectAll(".cell")
+                .data(treemap)
+                .enter()
+                .append("g")
+                .attr("class", "cell")
+            cells.append("rect")
+                .attr("width", widthOriginal)
+                .attr("height", heightOriginal)
+                .attr("x", xOriginal)
+                .attr("y", yOriginal)
+                .transition()
+                .duration(1000)
+                .ease("d3.easeCubic")
+                .attr("x", function (d){
+                    xOriginal = d.x;
+                    return d.x;
+                })
+                .attr("y", function (d) {
+                    yOriginal = d.y;
+                    return d.y;
+                })
+                .attr("width", function (d) {
+                    widthOriginal = d.dx;
+                    return d.dx;
+                })
+                .attr("height", function (d) {
+                    heightOriginal = d.dy;
+                    return d.dy;
+                })
+                .attr("fill", function (d) {
+                    return d.children ? null : color(d.parent.name);
+                })
+                .attr("stroke", "white");
+            cells
+                .on('mouseover', function() {
+                    tooltip.style('visibility', 'visible');
+                })
+                .on('mousemove', function(d) {
+                    tooltip
+                        .style('top', d3.event.pageY - 10 + 'px')
+                        .style('left', d3.event.pageX + 10 + 'px')
+                        .style('background-color', color(d.parent.name))
+                        .text(`Matches where ${d.parent.name}`);
+                })
+                .on('mouseout', function() {
+                    tooltip.style('visibility', 'hidden');
+                })
+                .on('click', function(d){
+                    originalData();
+                });
+
+            cells.append("text")
+                .attr("x", 0)
+                .attr("y", 0)
+                .transition()
+                .duration(300)
+                .ease("d3.easeCubic")
+                .attr("x", function (d) {
+                    return d.x + d.dx / 2
+                })
+                .attr("y", function (d) {
+                    return d.y + d.dy / 2
+                })
+                .attr("text-anchor", "middle")
+                .text(function (d) {
+                    return d.children ? null: d.name + ": " + d.value;
+                })
+        });
+    }
+
+    function originalData(){
+        canvas
+            .transition()
+            .duration(1000)
+            .ease("d3.easeCubic")
+            .attr("height", 0).remove()
+        body = d3.select("#body")
+        color = d3.scale.category10();
+
+        canvas = d3.select("body").append("svg")
+            .attr("width", 800)
+            .attr("height", 800)
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+        d3.json("fightGeneralData.json", function (data) {
+
+            var treemap = d3.layout.treemap()
+                .size([800, 800])
+                .nodes(data)
+            var cells = canvas.selectAll(".cell")
+                .data(treemap)
+                .enter()
+                .append("g")
+                .attr("class", "cell")
+            cells.append("rect")
+                .attr("width", widthOriginal)
+                .attr("height", heightOriginal)
+                .attr("x", xOriginal)
+                .attr("y", yOriginal)
+                .transition()
+                .duration(1000)
+                .ease("d3.easeCubic")
+                .attr("x", function (d){
+                    xOriginal = d.x;
+                    return d.x;
+                })
+                .attr("y", function (d) {
+                    yOriginal = d.y;
+                    return d.y;
+                })
+                .attr("width", function (d) {
+                    widthOriginal = d.dx;
+                    return d.dx;
+                })
+                .attr("height", function (d) {
+                    heightOriginal = d.dy;
+                    return d.dy;
+                })
+                .attr("fill", function (d) {
+                    return d.children ? null : color(d.name);
+                })
+                .attr("stroke", "white");
+
+            cells
+                .on('mouseover', function() {
+                    tooltip.style('visibility', 'visible');
+                })
+                .on('mousemove', function(d) {
+                    tooltip
+                        .style('top', d3.event.pageY - 10 + 'px')
+                        .style('left', d3.event.pageX + 10 + 'px')
+                        .style('background-color', color(d.name))
+                        .text(`Matches where ${d.name}`);
+                })
+                .on('mouseout', function() {
+                    tooltip.style('visibility', 'hidden');
+                })
+                .on('click', function(d){
+                    updateData();
+                });
+
+            cells.append("text")
+                .attr("x", 0)
+                .attr("y", 0)
+                .transition()
+                .duration(300)
+                .ease("d3.easeCubic")
+                .attr("x", function (d) {
+                    return d.x + d.dx / 2
+                })
+                .attr("y", function (d) {
+                    return d.y + d.dy / 2
+                })
+                .attr("text-anchor", "middle")
+                .text(function (d) {
+                    return d.children ? null: d.name + ": " + d.value;
+                })
+        });
+    }
+</script>
+</div>
+</body>
+</html>

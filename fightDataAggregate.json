@@ -1,0 +1,35 @@
+{
+  "name": "Total Fights",
+  "value": 959,
+  "children": [
+    {
+      "name": "Younger Won",
+      "value": 497,
+      "children":[
+        {"name":"Decision", "value": 251},
+        {"name":"KO/TKO or DQ", "value": 171},
+        {"name":"Submission", "value": 75}
+      ]
+    },
+
+    {
+      "name": "Older Won",
+      "value": 371,
+      "children":[
+        {"name":"Decision", "value": 193},
+        {"name":"KO/TKO or DQ", "value": 109},
+        {"name":"Submission", "value": 69}
+      ]
+    },
+
+    {
+      "name": "Same Age Won",
+      "value": 91,
+      "children":[
+        {"name":"Dec", "value": 48},
+        {"name":"KO/DQ", "value": 24},
+        {"name":"Sub", "value": 19}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- Website template from https://www.w3schools.com/w3css/w3css_templates.asp -->
+<html>
+<title>CPSC 583 Project</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+<style>
+    body, html {
+        height: 100%;
+        font-family: "Inconsolata", sans-serif;
+    }
+
+    .bgimg {
+        background-position: center;
+        background-size: cover;
+        background-image: url("background.jpeg");
+        min-height: 75%;
+    }
+
+</style>
+<body>
+
+<!-- Links (sit on top) -->
+<div class="w3-top">
+    <div class="w3-row w3-padding w3-black">
+        <div class="w3-col s3">
+            <a href="#" class="w3-button w3-block w3-black">Home</a>
+        </div>
+        <div class="w3-col s3">
+            <a href="#about" class="w3-button w3-block w3-black">About</a>
+        </div>
+        <div class="w3-col s3">
+            <a href="#visual" class="w3-button w3-block w3-black">Visualizations</a>
+        </div>
+        <div class="w3-col s3">
+            <a href="#conclusion" class="w3-button w3-block w3-black">Conclusion</a>
+        </div>
+    </div>
+</div>
+
+<!-- Header with image -->
+<header class="bgimg w3-display-container w3-grayscale-min" id="home">
+    <div class="w3-display-bottomleft w3-center w3-padding-large w3-hide-small">
+        <span class="w3-tag">CPSC 583 Winter 2021</span>
+    </div>
+    <div class="w3-display-middle w3-center">
+        <span class="w3-text-white" style="font-size:90px">MMA<br>Stats</span>
+    </div>
+    <div class="w3-display-bottomright w3-center w3-padding-large">
+        <span class="w3-text-white">Muhammad Saadan</span>
+    </div>
+</header>
+
+<!-- Add a background color and large text to the whole page -->
+<div class="w3-sand w3-grayscale w3-large">
+
+    <!-- About Container -->
+    <div class="w3-container" id="about">
+        <div class="w3-content" style="max-width:700px">
+            <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">About the project</span></h5>
+            <p>The purpose of this project was to demonstrate the knowledge and techniques I learned about Data Visualization this semester. Out of personal interest, I decided to study a dataset of the last ~1000 fights in the UFC (Ultimate Fighting Championship).</p>
+            <p>My focus during this project ended up on the statistical advantage (or lack thereof) that fighters could have based on the difference between their age and that of their opponent. Using three distinct types of visualizations, I have displayed my findings, so enjoy!</p>
+            <div class="w3-panel w3-leftbar w3-light-grey">
+                <p><i>“Where there is only a choice between cowardice and violence, I would advise violence.”</i></p>
+                <p>– Mahatma Gandhi </p>
+                <p>(Disclaimer: I only approve this in the context of Mixed Martial Arts)</p>
+            </div>
+            <img src="glove.jpeg" style="width:100%;max-width:1000px" class="w3-margin-top">
+        </div>
+    </div>
+
+    <!-- Visualization Container -->
+    <div class="w3-container" id="visual">
+        <div class="w3-content" style="max-width:700px">
+
+            <h5 class="w3-center w3-padding-48"><span class="w3-tag w3-wide">The Visualizations</span></h5>
+            <p class="w3-text-grey w3-center"><a href ="TreeMap.html">Tree Map</a></p>
+            <p class="w3-text-grey w3-center"> <a href ="StackedBar.html">Bar Chart</a></p>
+            <p class="w3-text-grey w3-center"><a href ="DoughnutChart.html">Donut Chart</a></p>
+        </div>
+    </div>
+
+    <!-- Contact/Area Container -->
+    <div class="w3-container" id="conclusion" style="padding-bottom:32px;">
+        <div class="w3-content" style="max-width:700px">
+            <h5 class="w3-center w3-padding-48"><span class="w3-tag w3-wide">Conclusion</span></h5>
+            <p>From the data examined (all fights over the last 3 years), it seems that younger fighters have a slight advantage over their older opponents.</p>
+
+        </div>
+    </div>
+
+    <!-- End page content -->
+</div>
+
+<!-- Footer -->
+<footer class="w3-center w3-light-grey w3-padding-48 w3-large">
+    <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-text-green">w3.css</a></p>
+</footer>
+
+</body>
+</html>

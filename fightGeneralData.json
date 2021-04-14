@@ -1,0 +1,20 @@
+{
+  "name": "Total Fights",
+  "value": 959,
+  "children": [
+    {
+      "name": "Younger Won",
+      "value": 497
+    },
+
+    {
+      "name": "Older Won",
+      "value": 371
+    },
+
+    {
+      "name": "Same Age Won",
+      "value": 91
+    }
+  ]
+}
